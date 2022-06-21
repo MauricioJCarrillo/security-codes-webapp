@@ -13,6 +13,7 @@ export function UseState({ name }) {
     console.log("Empezando el efecto");
 
     if (!!loading) {
+      setError(false);
       setTimeout(() => {
         console.log("Haciendo la validación");
 
