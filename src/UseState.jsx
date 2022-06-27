@@ -7,6 +7,8 @@ export function UseState({ name }) {
     value: "",
     error: false,
     loading: false,
+    deleted: false,
+    confirmed: false,
   });
 
   console.log(state);
@@ -19,7 +21,7 @@ export function UseState({ name }) {
         console.log("Haciendo la validación");
 
         if (state.value === SECURITY_CODE) {
-          setState({ ...state, loading: false });
+          setState({ ...state, error: false, loading: false, confirmed: true });
         } else {
           setState({ ...state, error: true, loading: false });
         }
@@ -31,29 +33,68 @@ export function UseState({ name }) {
     console.log("Terminando el efecto");
   }, [state.loading]);
 
-  return (
-    <div>
-      <h2>Eliminar {name}</h2>
+  if (!state.deleted && !state.confirmed) {
+    return (
+      <div>
+        <h2>Eliminar {name}</h2>
 
-      <p>Por favor escribe el código de seguridad</p>
+        <p>Por favor escribe el código de seguridad</p>
 
-      {state.error && <p>Error: el código es incorrecto</p>}
-      {state.loading && <p>Cargando...</p>}
+        {state.error && !state.loading && <p>Error: el código es incorrecto</p>}
+        {state.loading && <p>Cargando...</p>}
 
-      <input
-        placeholder="Código de seguridad"
-        value={state.value}
-        onChange={(event) => {
-          setState({ ...state, value: event.target.value });
-        }}
-      />
-      <button
-        onClick={() => {
-          setState({ ...state, loading: true, error: false });
-        }}
-      >
-        Comprobar
-      </button>
-    </div>
-  );
+        <input
+          placeholder="Código de seguridad"
+          value={state.value}
+          onChange={(event) => {
+            setState({ ...state, value: event.target.value });
+          }}
+        />
+        <button
+          onClick={() => {
+            setState({ ...state, loading: true });
+          }}
+        >
+          Comprobar
+        </button>
+      </div>
+    );
+  } else if (!state.deleted && !!state.confirmed) {
+    return (
+      <div>
+        <h2>Confirmación</h2>
+
+        <p>¿Estás seguro que quieres eliminar el elemento?</p>
+
+        <button
+          onClick={() => {
+            setState({ ...state, deleted: true });
+          }}
+        >
+          Eliminar
+        </button>
+        <button
+          onClick={() => {
+            setState({ ...state, confirmed: false, value: "" });
+          }}
+        >
+          No, me arrepentí
+        </button>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <p>Eliminado con éxito</p>
+
+        <button
+          onClick={() => {
+            setState({ ...state, deleted: false, confirmed: false, value: "" });
+          }}
+        >
+          Regresar
+        </button>
+      </div>
+    );
+  }
 }
