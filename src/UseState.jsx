@@ -13,6 +13,30 @@ export function UseState({ name }) {
 
   console.log(state);
 
+  const onConfirm = () => {
+    setState({ ...state, error: false, loading: false, confirmed: true });
+  };
+
+  const onError = () => {
+    setState({ ...state, error: true, loading: false });
+  };
+
+  const onWrite = (event) => {
+    setState({ ...state, value: event.target.value });
+  };
+
+  const onCheck = () => {
+    setState({ ...state, loading: true });
+  };
+
+  const onDeleted = () => {
+    setState({ ...state, deleted: true });
+  };
+
+  const onReset = () => {
+    setState({ ...state, deleted: false, confirmed: false, value: "" });
+  };
+
   useEffect(() => {
     console.log("Empezando el efecto");
 
@@ -21,9 +45,9 @@ export function UseState({ name }) {
         console.log("Haciendo la validación");
 
         if (state.value === SECURITY_CODE) {
-          setState({ ...state, error: false, loading: false, confirmed: true });
+          onConfirm();
         } else {
-          setState({ ...state, error: true, loading: false });
+          onError();
         }
 
         console.log("Terminando la validación");
@@ -47,12 +71,12 @@ export function UseState({ name }) {
           placeholder="Código de seguridad"
           value={state.value}
           onChange={(event) => {
-            setState({ ...state, value: event.target.value });
+            onWrite(event);
           }}
         />
         <button
           onClick={() => {
-            setState({ ...state, loading: true });
+            onCheck();
           }}
         >
           Comprobar
@@ -68,14 +92,14 @@ export function UseState({ name }) {
 
         <button
           onClick={() => {
-            setState({ ...state, deleted: true });
+            onDeleted();
           }}
         >
           Eliminar
         </button>
         <button
           onClick={() => {
-            setState({ ...state, confirmed: false, value: "" });
+            onReset();
           }}
         >
           No, me arrepentí
@@ -89,7 +113,7 @@ export function UseState({ name }) {
 
         <button
           onClick={() => {
-            setState({ ...state, deleted: false, confirmed: false, value: "" });
+            onReset();
           }}
         >
           Regresar
